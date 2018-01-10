@@ -1,5 +1,4 @@
 <?php
-	
 PerchSystem::register_feather('PipitPinion');
 include('config.php');
 include('lib/PipitPinion_Helper.class.php');
@@ -8,7 +7,9 @@ class PerchFeather_PipitPinion extends PerchFeather
 {
 	
 	public function get_css($opts, $index, $count)
-	{	
+	{
+		$Helper = new PipitPinion_Helper();
+
 		if(isset($opts['dev']) &&  $opts['dev'] && PERCH_PRODUCTION_MODE !== "PERCH_DEVELOPMENT")
 		{
 			return false;
@@ -20,10 +21,13 @@ class PerchFeather_PipitPinion extends PerchFeather
 		if(isset($opts['files']))
 		{
 			$files = $opts['files'];
+			if(isset($opts['cache-bust']))
+			{
+				$files = $Helper->auto_version($files, false, $opts['cache-bust']);
+			}
 		}
 		else
 		{
-			$Helper = new PipitPinion_Helper();
 			$dir = $Helper->get_dir($opts, 'css');
 			$files = $Helper->get_files($dir['path']);
 			$prefix = $dir['url'];
@@ -35,6 +39,10 @@ class PerchFeather_PipitPinion extends PerchFeather
 			if(isset($opts['exclude']))
 			{
 				$files = $Helper->exclude_files($files, $opts['exclude']);
+			}
+			if(isset($opts['cache-bust']))
+			{
+				$files = $Helper->auto_version($files, $dir['path'], $opts['cache-bust']);
 			}
 		}
 		
@@ -60,9 +68,7 @@ class PerchFeather_PipitPinion extends PerchFeather
 					'type'=>'text/css'
 			]);
 		}
-		
-		
-		
+			
 		return implode("\n\t", $out)."\n";
 	}
 	
@@ -74,6 +80,8 @@ class PerchFeather_PipitPinion extends PerchFeather
 
 	public function get_javascript($opts, $index, $count)
 	{
+		$Helper = new PipitPinion_Helper();
+
 		if(isset($opts['dev']) &&  $opts['dev'] && PERCH_PRODUCTION_MODE !== "PERCH_DEVELOPMENT")
 		{
 			return false;
@@ -85,10 +93,13 @@ class PerchFeather_PipitPinion extends PerchFeather
 		if(isset($opts['files']))
 		{
 			$files = $opts['files'];
+			if(isset($opts['cache-bust']))
+			{
+				$files = $Helper->auto_version($files, false, $opts['cache-bust']);
+			}
 		}
 		else
 		{
-			$Helper = new PipitPinion_Helper();
 			$dir = $Helper->get_dir($opts, 'js');
 			$files = $Helper->get_files($dir['path']);
 			$prefix = $dir['url'];
@@ -100,6 +111,10 @@ class PerchFeather_PipitPinion extends PerchFeather
 			if(isset($opts['exclude']))
 			{
 				$files = $Helper->exclude_files($files, $opts['exclude']);
+			}
+			if(isset($opts['cache-bust']))
+			{
+				$files = $Helper->auto_version($files, $dir['path'], $opts['cache-bust']);
 			}
 		}
 		
@@ -122,6 +137,12 @@ class PerchFeather_PipitPinion extends PerchFeather
 				if (!$this->component_registered($component)) 
 				{
 					$attrs = [];
+
+					if(isset($opts['cache-bust']))
+					{
+						$opts = $Helper->match_attrs_filename($opts, $files);
+					}
+
 					if(isset($opts['attrs'][$file]))
 					{
 						$attrs = $opts['attrs'][$file];

@@ -55,7 +55,6 @@ class PipitPinion_Helper
 			}
 		}
 		
-		
 		return $files;
 	}
 	
@@ -88,5 +87,111 @@ class PipitPinion_Helper
 		}
 		
 		return array_values($files);
+	}
+
+
+
+	public function auto_version($files, $dir_path=false, $cache_bust)
+	{
+		$files = array_values($files);
+
+		if(is_array($cache_bust))
+		{
+			foreach($cache_bust as $file)
+			{
+				if($dir_path)
+				{
+					$full_path = $dir_path . DIRECTORY_SEPARATOR . $file;
+				}
+				else
+				{
+					//work it out from url '/some/path'
+					$full_path = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $file;
+				}
+				
+				$path_info = pathinfo($file);
+
+				if (file_exists($full_path)) 
+				{
+					//$filename = rtrim($file, '.'.$path_info['extension']);
+					$filename = substr($file, 0, strrpos($file, '.'));
+					$result = array_search($file, $files, true);
+					$files[$result] = $filename . '.' . filemtime($full_path) . '.' . $path_info['extension'];
+				}
+			}
+		}
+		else
+		{
+			foreach($files as $key => $file)
+			{
+				if($dir_path)
+				{
+					$full_path = $dir_path . DIRECTORY_SEPARATOR . $file;
+				}
+				else
+				{
+					//work it out from url '/some/path'
+					$full_path = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $file;
+				}
+
+				$path_info = pathinfo($full_path);
+
+				if (file_exists($full_path)) 
+				{
+					//$filename = rtrim($file, '.'.$path_info['extension']);
+					$filename = substr($file, 0, strrpos($file, '.'));
+					$files[$key] = $filename . '.' . filemtime($full_path) . '.' . $path_info['extension'];
+				}
+			}
+		}
+
+		
+		return $files;
+	}
+
+
+
+
+	function match_attrs_filename($opts, $files)
+	{
+		foreach($opts['attrs'] as $key => $file_with_attr)
+		{
+			foreach($files as $file)
+			{
+				$path_info = pathinfo($file);
+				$filename = $path_info['filename'];
+
+				$time = substr($filename, strrpos($filename, '.') + 1);
+				if(is_numeric($time))
+				{
+					$original_filename = substr($filename, 0, strrpos($filename, '.'));
+
+					$attr_path_info = pathinfo($key);
+					$attr_filename = $attr_path_info['filename'];
+
+					if($attr_filename === $original_filename)
+					{
+						$opts['attrs'][$file] = $opts['attrs'][$key];
+					}
+				}
+			}
+		}
+
+		return $opts;
+	}
+
+	
+
+
+	function str_lreplace($search, $replace, $subject)
+	{
+		$pos = strrpos($subject, $search);
+	
+		if($pos !== false)
+		{
+			$subject = substr_replace($subject, $replace, $pos, strlen($search));
+		}
+	
+		return $subject;
 	}
 }
