@@ -58,3 +58,29 @@ In this example, CSS files need to be in `assets/css` and `src/css`, and Javascr
 ```
 
 The `perch_get_css()` and `perch_get_javascript()` functions have several options you can use giving you a lot of flexibility to control what gets inserted into your document and in what order. For more details check the [Function Reference](https://grabapipit.com/pipits/feathers/pinion/docs/functions) page.
+
+
+### Cache Busting
+
+If you want to use Pinion's cache busting feature, you need to add the following to your `.htaccess` file:
+
+```php
+RewriteRule ^(.+)\.(\d+)\.(js|css)$ $1.$3 [L]
+```
+
+If you are using Runway, make sure to add it before `RewriteCond %{REQUEST_URI} !^/perch`:
+
+```php
+# Perch Runway
+RewriteEngine On
+RewriteRule ^(.+)\.(\d+)\.(js|css)$ $1.$3 [L]
+RewriteCond %{REQUEST_URI} !^/perch 
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule .* /perch/core/runway/start.php [L] 
+```
+
+If you are already handling renaming your file with a task manager like Gulp or Grunt (using `gulp-cache-bust` or `grunt-cache-bust`), then there's no need to use this feature.
+
+If you are adding a version to your file name (e.g. `styles.v2.0.css`), then you shouldn't to use this feature.
+
+If your files are named like `styles.css`, this is for you.
