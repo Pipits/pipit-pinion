@@ -1,4 +1,5 @@
 <?php
+    // add to htaccess: RewriteRule ^(.+)\.(\d+)\.(js|css)$ $1.$3 [L]
 	define('PIPIT_PINION_ASSETS_DIR', 'assets');
 	define('PIPIT_PINION_ASSETS_DEV_DIR', 'src');
 	
