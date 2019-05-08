@@ -154,24 +154,27 @@ class PipitPinion_Helper
 
 	function match_attrs_filename($opts, $files)
 	{
-		foreach($opts['attrs'] as $key => $file_with_attr)
+		if(isset($opts['attrs'])) 
 		{
-			foreach($files as $file)
+			foreach($opts['attrs'] as $key => $file_with_attr)
 			{
-				$path_info = pathinfo($file);
-				$filename = $path_info['filename'];
-
-				$time = substr($filename, strrpos($filename, '.') + 1);
-				if(is_numeric($time))
+				foreach($files as $file)
 				{
-					$original_filename = substr($filename, 0, strrpos($filename, '.'));
+					$path_info = pathinfo($file);
+					$filename = $path_info['filename'];
 
-					$attr_path_info = pathinfo($key);
-					$attr_filename = $attr_path_info['filename'];
-
-					if($attr_filename === $original_filename)
+					$time = substr($filename, strrpos($filename, '.') + 1);
+					if(is_numeric($time))
 					{
-						$opts['attrs'][$file] = $opts['attrs'][$key];
+						$original_filename = substr($filename, 0, strrpos($filename, '.'));
+
+						$attr_path_info = pathinfo($key);
+						$attr_filename = $attr_path_info['filename'];
+
+						if($attr_filename === $original_filename)
+						{
+							$opts['attrs'][$file] = $opts['attrs'][$key];
+						}
 					}
 				}
 			}
