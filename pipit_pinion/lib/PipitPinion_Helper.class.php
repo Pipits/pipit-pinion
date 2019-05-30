@@ -34,7 +34,9 @@ class PipitPinion_Helper {
 
 		} else {
 			$dir = $this->_get_dir($opts, $dir_name);
-			$files = $this->get_files($dir['path']);
+			$files = $this->_get_files($dir['path']);
+			//PerchUtil::mark($dir_name);
+			//PerchUtil::debug($files);
 			$prefix = $dir['url'];
 			
 			if(isset($opts['pre'])) {
@@ -101,20 +103,19 @@ class PipitPinion_Helper {
 	/**
 	 * Get files from a directory
 	 */
-	public function get_files($dir) {
+	private function _get_files($dir) {
 		$files = scandir($dir);
 		unset($files[array_search('.', $files, true)]);
 		unset($files[array_search('..', $files, true)]);
 		
 		
-		foreach($files as $file)
-		{
-			if(is_dir($dir . DIRECTORY_SEPARATOR . $file))
-			{
-				$sub_files = $this->get_files($dir . DIRECTORY_SEPARATOR . $file);
+		foreach($files as $file) {
+			$file_or_dir = PerchUtil::file_path("$dir/$file");
+
+			if(is_dir($file_or_dir)) {
+				$sub_files = $this->_get_files($file_or_dir);
 				
-				foreach($sub_files as $sub_file)
-				{
+				foreach($sub_files as $sub_file) {
 					$files[] = $file . '/' . $sub_file;
 				}
 				
@@ -127,6 +128,11 @@ class PipitPinion_Helper {
 	
 
 	
+
+
+	/**
+	 * Reorder files by prioritising files in $pre array
+	 */
 	public function reorder_files($files, $pre)
 	{
 		$files = array_values($files);
@@ -144,8 +150,12 @@ class PipitPinion_Helper {
 	
 
 	
-	public function exclude_files($files, $excludes)
-	{
+
+
+	/**
+	 * Exclude files
+	 */
+	public function exclude_files($files, $excludes) {
 		$files = array_values($files);
 		foreach($excludes as $exclude)
 		{
@@ -158,8 +168,13 @@ class PipitPinion_Helper {
 
 
 
-	public function auto_version($files, $dir_path=false, $cache_bust)
-	{
+
+
+
+	/**
+	 * Add a timestamp to the file for cache busting
+	 */
+	public function auto_version($files, $dir_path=false, $cache_bust) {
 		$files = array_values($files);
 
 		if(is_array($cache_bust))
