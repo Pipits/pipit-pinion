@@ -33,7 +33,7 @@ class PipitPinion_Helper {
 			}
 
 		} else {
-			$dir = $this->get_dir($opts, $dir_name);
+			$dir = $this->_get_dir($opts, $dir_name);
 			$files = $this->get_files($dir['path']);
 			$prefix = $dir['url'];
 			
@@ -56,41 +56,52 @@ class PipitPinion_Helper {
 
 
 
+
+
+
 	/**
+	 * Get directory path and web URL
 	 * 
+	 * @param array $opts			Options array
+	 * @param string $dir_name		Directory name
+	 * 
+	 * @return array
 	 */
-	public function get_dir($opts, $dir_name)
-	{
+	private function _get_dir($opts, $dir_name) {
 		$dir = [];
 		
-		if(isset($opts['dir']))
-		{
-			$dir['path'] = dirname(PERCH_PATH) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR , $opts['dir']);
-			
+		if(isset($opts['dir'])) {
+			$dir['path'] = PerchUtil::file_path(dirname(PERCH_PATH) . '/' . $opts['dir']);
 			$dir['url'] = '/'.$opts['dir'];
-			if(substr($opts['dir'], -1) !== '/')
-			{
-				$dir['url'] = '/'.$opts['dir'].'/';
-			}
-		}
-		else if(PERCH_PRODUCTION_MODE == "PERCH_DEVELOPMENT")
-		{
-			$dir['path'] = PIPIT_PINION_ASSETS_DEV_PATH . DIRECTORY_SEPARATOR . $dir_name;
+
+			// check last charact. Not a slash? Add one.
+			if(substr($opts['url'], -1) !== '/') $dir['url'] .= '/';
+
+		} elseif(PERCH_PRODUCTION_MODE == "PERCH_DEVELOPMENT") {
+
+			$dir['path'] = PerchUtil::file_path(PIPIT_PINION_ASSETS_DEV_PATH . '/' . $dir_name);
 			$dir['url'] = '/' . PIPIT_PINION_ASSETS_DEV_DIR . '/' . $dir_name . '/';
-		}
-		else
-		{
-			$dir['path'] = PIPIT_PINION_ASSETS_PATH . DIRECTORY_SEPARATOR . $dir_name;
+
+		} else {
+
+			$dir['path'] = PerchUtil::file_path(PIPIT_PINION_ASSETS_PATH . '/' . $dir_name);
 			$dir['url'] = '/' . PIPIT_PINION_ASSETS_DIR . '/' . $dir_name . '/';
+
 		}
+
 		
 		return $dir;
 	}
 	
 	
 	
-	public function get_files($dir)
-	{
+
+
+
+	/**
+	 * Get files from a directory
+	 */
+	public function get_files($dir) {
 		$files = scandir($dir);
 		unset($files[array_search('.', $files, true)]);
 		unset($files[array_search('..', $files, true)]);
