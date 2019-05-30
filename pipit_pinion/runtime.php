@@ -12,36 +12,13 @@ class PerchFeather_PipitPinion extends PerchFeather {
 		if(!$Helper->is_dev_mode($opts)) return false;
 		
 
-
-
 		$out = array();
-		$prefix = '/';
-		
-		if(isset($opts['files'])) {
-			$files = $opts['files'];
-			if(isset($opts['cache-bust'])) {
-				$files = $Helper->auto_version($files, false, $opts['cache-bust']);
-			}
-		} else {
-			$dir = $Helper->get_dir($opts, 'css');
-			$files = $Helper->get_files($dir['path']);
-			$prefix = $dir['url'];
-			
-			if(isset($opts['pre'])) {
-				$files = $Helper->reorder_files($files, $opts['pre']);
-			}
+		$result = $Helper->get_filepaths('css', $opts);
+		$files = $result['files'];
+		$prefix = $result['prefix'];
 
-			if(isset($opts['exclude'])) {
-				$files = $Helper->exclude_files($files, $opts['exclude']);
-			}
-
-			if(isset($opts['cache-bust'])) {
-				$files = $Helper->auto_version($files, $dir['path'], $opts['cache-bust']);
-			}
-		}
 		
 		
-
 
 		// render link stylsheet tags
 		foreach($files as $file) {
@@ -81,32 +58,11 @@ class PerchFeather_PipitPinion extends PerchFeather {
 		if(!$Helper->is_dev_mode($opts)) return false;
 		
 
-		
+
 		$out = array();
-		$prefix = '/';
-		
-		if(isset($opts['files'])) {
-			$files = $opts['files'];
-			if(isset($opts['cache-bust'])) {
-				$files = $Helper->auto_version($files, false, $opts['cache-bust']);
-			}
-		} else {
-			$dir = $Helper->get_dir($opts, 'js');
-			$files = $Helper->get_files($dir['path']);
-			$prefix = $dir['url'];
-			
-			if(isset($opts['pre'])) {
-				$files = $Helper->reorder_files($files, $opts['pre']);
-			}
-
-			if(isset($opts['exclude'])) {
-				$files = $Helper->exclude_files($files, $opts['exclude']);
-			}
-
-			if(isset($opts['cache-bust'])) {
-				$files = $Helper->auto_version($files, $dir['path'], $opts['cache-bust']);
-			}
-		}
+		$result = $Helper->get_filepaths('js', $opts);
+		$files = $result['files'];
+		$prefix = $result['prefix'];
 		
 		
 		

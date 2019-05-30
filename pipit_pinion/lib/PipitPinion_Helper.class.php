@@ -1,14 +1,64 @@
 <?php
 
-class PipitPinion_Helper
-{
+class PipitPinion_Helper {
 
+	/**
+	 * Check whether development assets should be added to the page
+	 * 
+	 * @param array $opts	Options array
+	 * @return boolean
+	 */
 	public function is_dev_mode($opts) {
 		if(isset($opts['dev']) && $opts['dev'] && PERCH_PRODUCTION_MODE !== PERCH_DEVELOPMENT) return false;
 
 		return true;
 	}
 	
+
+	/**
+	 * Get paths of the files that should be added to the page
+	 * 
+	 * @param string $dir_name		Directory name
+	 * @param array $ops			Options array
+	 * @return boolean
+	 */
+	public function get_filepaths($dir_name = 'css', $opts) {
+		$prefix = '/';
+
+		if(isset($opts['files'])) {
+			$files = $opts['files'];
+
+			if(isset($opts['cache-bust'])) {
+				$files = $this->auto_version($files, false, $opts['cache-bust']);
+			}
+
+		} else {
+			$dir = $this->get_dir($opts, $dir_name);
+			$files = $this->get_files($dir['path']);
+			$prefix = $dir['url'];
+			
+			if(isset($opts['pre'])) {
+				$files = $this->reorder_files($files, $opts['pre']);
+			}
+
+			if(isset($opts['exclude'])) {
+				$files = $this->exclude_files($files, $opts['exclude']);
+			}
+
+			if(isset($opts['cache-bust'])) {
+				$files = $this->auto_version($files, $dir['path'], $opts['cache-bust']);
+			}
+		}
+
+
+		return ['files' => $files, 'prefix' => $prefix];
+	}
+
+
+
+	/**
+	 * 
+	 */
 	public function get_dir($opts, $dir_name)
 	{
 		$dir = [];
