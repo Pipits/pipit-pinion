@@ -2,6 +2,12 @@
 
 class PipitPinion_Helper
 {
+
+	public function is_dev_mode($opts) {
+		if(isset($opts['dev']) && $opts['dev'] && PERCH_PRODUCTION_MODE !== PERCH_DEVELOPMENT) return false;
+
+		return true;
+	}
 	
 	public function get_dir($opts, $dir_name)
 	{
