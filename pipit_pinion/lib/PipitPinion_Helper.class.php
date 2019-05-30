@@ -77,7 +77,7 @@ class PipitPinion_Helper {
 			$dir['url'] = '/'.$opts['dir'];
 
 			// check last charact. Not a slash? Add one.
-			if(substr($opts['url'], -1) !== '/') $dir['url'] .= '/';
+			if(substr($dir['url'], -1) !== '/') $dir['url'] .= '/';
 
 		} elseif(PERCH_PRODUCTION_MODE == "PERCH_DEVELOPMENT") {
 
@@ -132,14 +132,14 @@ class PipitPinion_Helper {
 
 	/**
 	 * Reorder files by prioritising files in $pre array
+	 * 
+	 * TODO: review and comment
 	 */
-	public function reorder_files($files, $pre)
-	{
+	public function reorder_files($files, $pre) {
 		$files = array_values($files);
-		for($i = count($pre); $i > 0; $i--)
-		{
-			if(array_search($pre[$i-1], $files, true))
-			{				
+		
+		for($i = count($pre); $i > 0; $i--) {
+			if(array_search($pre[$i-1], $files, true)) {				
 				unset($files[array_search($pre[$i-1], $files, true)]);
 				array_unshift($files, $pre[$i-1]);
 			}
@@ -157,8 +157,7 @@ class PipitPinion_Helper {
 	 */
 	public function exclude_files($files, $excludes) {
 		$files = array_values($files);
-		foreach($excludes as $exclude)
-		{
+		foreach($excludes as $exclude) {
 			$result = array_search($exclude, $files, true);
 			unset($files[$result]);
 		}
@@ -177,54 +176,49 @@ class PipitPinion_Helper {
 	public function auto_version($files, $dir_path=false, $cache_bust) {
 		$files = array_values($files);
 
-		if(is_array($cache_bust))
-		{
-			foreach($cache_bust as $file)
-			{
-				if($dir_path)
-				{
+		// array of files given, handle those only
+		if(is_array($cache_bust)) {
+			foreach($cache_bust as $file) {
+				if($dir_path) {
 					$full_path = $dir_path . DIRECTORY_SEPARATOR . $file;
-				}
-				else
-				{
+				} else {
 					//work it out from url '/some/path'
 					$full_path = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $file;
 				}
 				
 				$path_info = pathinfo($file);
 
-				if (file_exists($full_path)) 
-				{
+				if (file_exists($full_path))  {
 					//$filename = rtrim($file, '.'.$path_info['extension']);
 					$filename = substr($file, 0, strrpos($file, '.'));
 					$result = array_search($file, $files, true);
 					$files[$result] = $filename . '.' . filemtime($full_path) . '.' . $path_info['extension'];
 				}
 			}
-		}
-		else
-		{
-			foreach($files as $key => $file)
-			{
-				if($dir_path)
-				{
+
+
+		} else {
+
+			// handle all files
+			foreach($files as $key => $file) {
+				
+				if($dir_path) {
 					$full_path = $dir_path . DIRECTORY_SEPARATOR . $file;
-				}
-				else
-				{
+				} else {
 					//work it out from url '/some/path'
 					$full_path = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $file;
 				}
 
+
 				$path_info = pathinfo($full_path);
 
-				if (file_exists($full_path)) 
-				{
+				if (file_exists($full_path)) {
 					//$filename = rtrim($file, '.'.$path_info['extension']);
 					$filename = substr($file, 0, strrpos($file, '.'));
 					$files[$key] = $filename . '.' . filemtime($full_path) . '.' . $path_info['extension'];
 				}
 			}
+
 		}
 
 		
@@ -234,14 +228,15 @@ class PipitPinion_Helper {
 
 
 
-	function match_attrs_filename($opts, $files)
-	{
-		if(isset($opts['attrs'])) 
-		{
-			foreach($opts['attrs'] as $key => $file_with_attr)
-			{
-				foreach($files as $file)
-				{
+
+
+	/**
+	 * 
+	 */
+	function match_attrs_filename($opts, $files) {
+		if(isset($opts['attrs']))  {
+			foreach($opts['attrs'] as $key => $file_with_attr) {
+				foreach($files as $file) {
 					$path_info = pathinfo($file);
 					$filename = $path_info['filename'];
 
@@ -266,14 +261,16 @@ class PipitPinion_Helper {
 	}
 
 	
+	
 
 
-	function str_lreplace($search, $replace, $subject)
-	{
+	/**
+	 * Not used. Remove?
+	 */
+	function str_lreplace($search, $replace, $subject) {
 		$pos = strrpos($subject, $search);
 	
-		if($pos !== false)
-		{
+		if($pos !== false) {
 			$subject = substr_replace($subject, $replace, $pos, strlen($search));
 		}
 	
