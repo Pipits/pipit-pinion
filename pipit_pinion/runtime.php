@@ -13,7 +13,7 @@ class PerchFeather_PipitPinion extends PerchFeather {
 		
 
 		$out = array();
-		$result = $Helper->get_filepaths('css', $opts);
+		$result = $Helper->get_filepaths('css', 'css', $opts);
 		$files = $result['files'];
 		$prefix = $result['prefix'];
 
@@ -60,7 +60,7 @@ class PerchFeather_PipitPinion extends PerchFeather {
 
 
 		$out = array();
-		$result = $Helper->get_filepaths('js', $opts);
+		$result = $Helper->get_filepaths('js', 'js', $opts);
 		$files = $result['files'];
 		$prefix = $result['prefix'];
 		

@@ -22,7 +22,7 @@ class PipitPinion_Helper {
 	 * @param array $ops			Options array
 	 * @return boolean
 	 */
-	public function get_filepaths($dir_name = 'css', $opts) {
+	public function get_filepaths($dir_name = 'css', $ext = 'css', $opts) {
 		$prefix = '/';
 
 		if(isset($opts['files'])) {
@@ -34,7 +34,8 @@ class PipitPinion_Helper {
 
 		} else {
 			$dir = $this->_get_dir($opts, $dir_name);
-			$files = $this->_get_files($dir['path']);
+			$files = $this->_get_files($dir['path'], $ext);
+			
 			//PerchUtil::mark($dir_name);
 			//PerchUtil::debug($files);
 			$prefix = $dir['url'];
@@ -51,7 +52,7 @@ class PipitPinion_Helper {
 				$files = $this->auto_version($files, $dir['path'], $opts['cache-bust']);
 			}
 		}
-
+		echo '<pre>' . print_r($files, 1) . '</pre>';
 
 		return ['files' => $files, 'prefix' => $prefix];
 	}
@@ -103,25 +104,29 @@ class PipitPinion_Helper {
 	/**
 	 * Get files from a directory
 	 */
-	private function _get_files($dir) {
-		$files = scandir($dir);
-		unset($files[array_search('.', $files, true)]);
-		unset($files[array_search('..', $files, true)]);
-		
-		
-		foreach($files as $file) {
-			$file_or_dir = PerchUtil::file_path("$dir/$file");
+	private function _get_files($dir_path, $ext, $prefix_path = '') {
+		$files = array();
 
-			if(is_dir($file_or_dir)) {
-				$sub_files = $this->_get_files($file_or_dir);
-				
-				foreach($sub_files as $sub_file) {
-					$files[] = $file . '/' . $sub_file;
+		if ($dir_handler = opendir($dir_path)) {
+			while (($file = readdir($dir_handler)) !== false) {
+				if(substr($file, 0, 1) != '.') {
+					$file_extenstion = PerchUtil::file_extension($file);
+					if($file_extenstion == $ext) {
+						$files[] = $prefix_path . $file;
+					} else {
+						//PerchUtil::mark('sub files');
+						//PerchUtil::debug($file);
+						if(is_dir("$dir_path/$file")) {
+							$sub_files = $this->_get_files("$dir_path/$file", $ext,   $prefix_path . $file . '/');
+							$files = array_merge($files, $sub_files);
+						} 
+					}
 				}
-				
-				unset($files[array_search($file, $files, true)]);
+
 			}
+			closedir($dir_handler);
 		}
+
 		
 		return $files;
 	}
@@ -216,7 +221,7 @@ class PipitPinion_Helper {
 		$full_path = $dir_path . DIRECTORY_SEPARATOR . $file;
 		
 		if (file_exists($full_path))  {
-			if($mode = 'query') {
+			if($mode == 'query') {
 				return $file . '?v=' . filemtime($full_path);
 			} else {
 				$filename = substr($file, 0, strrpos($file, '.'));
