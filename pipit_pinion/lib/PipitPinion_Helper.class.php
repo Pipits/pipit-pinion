@@ -172,59 +172,51 @@ class PipitPinion_Helper {
 
 	/**
 	 * Add a timestamp to the file for cache busting
+	 * 
+	 * @param array $files 					Array of files to be versioned
+	 * @param boolean|string $dir_path		Directory path if not document root
+	 * @param array $cache_bust_files		Array of files to be versioned from $files. The rest to be left as is.
+	 * 
+	 * @return array
 	 */
-	public function auto_version($files, $dir_path=false, $cache_bust) {
+	public function auto_version($files, $dir_path=false, $cache_bust_files) {
 		$files = array_values($files);
 
-		// array of files given, handle those only
-		if(is_array($cache_bust)) {
-			foreach($cache_bust as $file) {
-				if($dir_path) {
-					$full_path = $dir_path . DIRECTORY_SEPARATOR . $file;
-				} else {
-					//work it out from url '/some/path'
-					$full_path = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $file;
-				}
-				
-				$path_info = pathinfo($file);
+		foreach($files as $key => $file) {
+			$result = false;
 
-				if (file_exists($full_path))  {
-					//$filename = rtrim($file, '.'.$path_info['extension']);
-					$filename = substr($file, 0, strrpos($file, '.'));
-					$result = array_search($file, $files, true);
-					$files[$result] = $filename . '.' . filemtime($full_path) . '.' . $path_info['extension'];
-				}
+			if(!is_array($cache_bust_files)) {
+				$result = $this->_version_file($file, $dir_path);				
+			} elseif(in_array($file, $cache_bust_files)) {
+				$result = $this->_version_file($file, $dir_path);
 			}
 
-
-		} else {
-
-			// handle all files
-			foreach($files as $key => $file) {
-				
-				if($dir_path) {
-					$full_path = $dir_path . DIRECTORY_SEPARATOR . $file;
-				} else {
-					//work it out from url '/some/path'
-					$full_path = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $file;
-				}
-
-
-				$path_info = pathinfo($full_path);
-
-				if (file_exists($full_path)) {
-					//$filename = rtrim($file, '.'.$path_info['extension']);
-					$filename = substr($file, 0, strrpos($file, '.'));
-					$files[$key] = $filename . '.' . filemtime($full_path) . '.' . $path_info['extension'];
-				}
-			}
-
+			if($result) $files[$key] = $result;
 		}
 
 		
 		return $files;
 	}
 
+
+
+
+	/**
+	 * 
+	 */
+	private function _version_file($file, $dir_path) {
+		$path_info = pathinfo($file);
+
+		if(!$dir_path) $dir_path = $_SERVER['DOCUMENT_ROOT'];
+		$full_path = $dir_path . DIRECTORY_SEPARATOR . $file;
+		
+		if (file_exists($full_path))  {
+			$filename = substr($file, 0, strrpos($file, '.'));
+			return $filename . '.' . filemtime($full_path) . '.' . $path_info['extension'];
+		}
+
+		return false;
+	}
 
 
 
