@@ -205,14 +205,23 @@ class PipitPinion_Helper {
 	 * 
 	 */
 	private function _version_file($file, $dir_path) {
+		$mode = 'name';
+		if(defined('PIPIT_PINION_CACHE_BUST_MODE')) {
+			$mode = PIPIT_PINION_CACHE_BUST_MODE;
+		}
+
 		$path_info = pathinfo($file);
 
 		if(!$dir_path) $dir_path = $_SERVER['DOCUMENT_ROOT'];
 		$full_path = $dir_path . DIRECTORY_SEPARATOR . $file;
 		
 		if (file_exists($full_path))  {
-			$filename = substr($file, 0, strrpos($file, '.'));
-			return $filename . '.' . filemtime($full_path) . '.' . $path_info['extension'];
+			if($mode = 'query') {
+				return $file . '?v=' . filemtime($full_path);
+			} else {
+				$filename = substr($file, 0, strrpos($file, '.'));
+				return $filename . '.' . filemtime($full_path) . '.' . $path_info['extension'];
+			}
 		}
 
 		return false;
