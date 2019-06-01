@@ -57,7 +57,9 @@ class PipitPinion_Helper {
 				$files = $this->auto_version($files, $dir['path'], $opts['cache-bust']);
 			}
 		}
-		echo '<pre>' . print_r($files, 1) . '</pre>';
+
+
+		//PerchUtil::debug($files);
 
 		return ['files' => $files, 'prefix' => $prefix];
 	}
@@ -260,7 +262,7 @@ class PipitPinion_Helper {
 
 
 
-	
+
 	/**
 	 * 
 	 */

@@ -18,17 +18,14 @@ class PerchFeather_PipitPinion extends PerchFeather {
 		$prefix = $result['prefix'];
 
 		
-		
 
 		// render link stylsheet tags
 		foreach($files as $file) {
-			if(substr($file, strrpos($file, '.' )+1) == 'css') {
-				$out[] = $this->_single_tag('link', [
-					'rel' => 'stylesheet',
-					'href' => $prefix.$file,
-					'type' => 'text/css'
-				]);
-			}
+			$out[] = $this->_single_tag('link', [
+				'rel' => 'stylesheet',
+				'href' => $prefix.$file,
+				'type' => 'text/css'
+			]);
 		}
 		
 		
@@ -67,31 +64,28 @@ class PerchFeather_PipitPinion extends PerchFeather {
 		
 		
 		foreach($files as $file) {
-			if(substr($file, strrpos($file, '.' )+1) == 'js') {
-				
-				if(strrpos($file, '/')) {
-					$component = substr($file, strrpos($file, '/') + 1);						
-				} else {
-					$component = $file;
+			if(strrpos($file, '/')) {
+				$component = substr($file, strrpos($file, '/') + 1);						
+			} else {
+				$component = $file;
+			}
+			
+			
+			if (!$this->component_registered($component)) {
+				$attrs = [];
+
+				if(isset($opts['cache-bust'])) {
+					$opts = $Helper->match_attrs_filename($opts, $files);
 				}
-				
-				
-				if (!$this->component_registered($component)) {
-					$attrs = [];
 
-					if(isset($opts['cache-bust'])) {
-						$opts = $Helper->match_attrs_filename($opts, $files);
-					}
-
-					if(isset($opts['attrs'][$file])) {
-						$attrs = $opts['attrs'][$file];
-					}
-
-					$attrs['src'] = $prefix.$file;
-					
-					$out[] = $this->_script_tag($attrs);
-					$this->register_component($component);
+				if(isset($opts['attrs'][$file])) {
+					$attrs = $opts['attrs'][$file];
 				}
+
+				$attrs['src'] = $prefix.$file;
+				
+				$out[] = $this->_script_tag($attrs);
+				$this->register_component($component);
 			}
 		}
 
