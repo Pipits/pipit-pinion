@@ -53,6 +53,12 @@ class PipitPinion_Helper {
 				$files = $this->exclude_files($files, $opts['exclude']);
 			}
 
+			// handle attributes
+			$attrs_files = array();
+			if(isset($opts['attrs'])) {
+				$attrs_files = $this->match_attrs_filename($opts['attrs'], $files);
+			}
+
 			if(isset($opts['cache-bust'])) {
 				$files = $this->auto_version($files, $dir['path'], $opts['cache-bust']);
 			}
@@ -61,7 +67,7 @@ class PipitPinion_Helper {
 
 		//PerchUtil::debug($files);
 
-		return ['files' => $files, 'prefix' => $prefix];
+		return ['files' => $files, 'prefix' => $prefix, 'attrs_files' => $attrs_files];
 	}
 
 
@@ -275,31 +281,17 @@ class PipitPinion_Helper {
 	/**
 	 * 
 	 */
-	function match_attrs_filename($opts, $files) {
-		if(isset($opts['attrs']))  {
-			foreach($opts['attrs'] as $key => $file_with_attr) {
-				foreach($files as $file) {
-					$path_info = pathinfo($file);
-					$filename = $path_info['filename'];
+	function match_attrs_filename($attrs, $files) {
+		$result = array();
 
-					$time = substr($filename, strrpos($filename, '.') + 1);
-					if(is_numeric($time))
-					{
-						$original_filename = substr($filename, 0, strrpos($filename, '.'));
-
-						$attr_path_info = pathinfo($key);
-						$attr_filename = $attr_path_info['filename'];
-
-						if($attr_filename === $original_filename)
-						{
-							$opts['attrs'][$file] = $opts['attrs'][$key];
-						}
-					}
-				}
+		foreach($attrs as $key => $value) {
+			$file_key = array_search($key, $files);
+			if($file_key !== false) {
+				$result[$file_key] = $value;
 			}
 		}
 
-		return $opts;
+		return $result;
 	}
 
 	

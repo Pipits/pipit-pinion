@@ -60,10 +60,11 @@ class PerchFeather_PipitPinion extends PerchFeather {
 		$result = $Helper->get_filepaths('js', 'js', $opts);
 		$files = $result['files'];
 		$prefix = $result['prefix'];
+		$attrs_files = $result['attrs_files'];
 		
 		
 		
-		foreach($files as $file) {
+		foreach($files as $key => $file) {
 			if(strrpos($file, '/')) {
 				$component = substr($file, strrpos($file, '/') + 1);						
 			} else {
@@ -74,12 +75,8 @@ class PerchFeather_PipitPinion extends PerchFeather {
 			if (!$this->component_registered($component)) {
 				$attrs = [];
 
-				if(isset($opts['cache-bust'])) {
-					$opts = $Helper->match_attrs_filename($opts, $files);
-				}
-
-				if(isset($opts['attrs'][$file])) {
-					$attrs = $opts['attrs'][$file];
+				if(isset($attrs_files[$key])) {
+					$attrs = $attrs_files[$key];
 				}
 
 				$attrs['src'] = $prefix.$file;
