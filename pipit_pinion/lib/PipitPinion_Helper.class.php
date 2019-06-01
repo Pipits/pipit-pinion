@@ -15,6 +15,11 @@ class PipitPinion_Helper {
 	}
 	
 
+
+
+
+
+
 	/**
 	 * Get paths of the files that should be added to the page
 	 * 
@@ -62,6 +67,7 @@ class PipitPinion_Helper {
 
 
 
+
 	/**
 	 * Get directory path and web URL
 	 * 
@@ -101,8 +107,15 @@ class PipitPinion_Helper {
 
 
 
+
 	/**
 	 * Get files from a directory
+	 * 
+	 * @param string $dir_path		The path to the directory from which to retrieve the files
+	 * @param string $ext			The file extention required
+	 * @param string $prefix_path	
+	 * 
+	 * @return array
 	 */
 	private function _get_files($dir_path, $ext, $prefix_path = '') {
 		$files = array();
@@ -135,6 +148,8 @@ class PipitPinion_Helper {
 	
 
 
+
+
 	/**
 	 * Reorder files by prioritising files in $pre array
 	 * 
@@ -157,6 +172,8 @@ class PipitPinion_Helper {
 	
 
 
+
+
 	/**
 	 * Exclude files
 	 */
@@ -175,8 +192,9 @@ class PipitPinion_Helper {
 
 
 
+
 	/**
-	 * Add a timestamp to the file for cache busting
+	 * Add a timestamp to files for cache busting
 	 * 
 	 * @param array $files 					Array of files to be versioned
 	 * @param boolean|string $dir_path		Directory path if not document root
@@ -207,7 +225,12 @@ class PipitPinion_Helper {
 
 
 	/**
+	 * Add a timestamp to a single file for cache busting
 	 * 
+	 * @param string $file			File name
+	 * @param string $dir_path		Path to the directory that contains the file
+	 * 
+	 * @return string|boolean
 	 */
 	private function _version_file($file, $dir_path) {
 		$mode = 'name';
@@ -236,6 +259,8 @@ class PipitPinion_Helper {
 
 
 
+
+	
 	/**
 	 * 
 	 */
