@@ -124,14 +124,18 @@ class PipitPinion_Helper {
 
 		if ($dir_handler = opendir($dir_path)) {
 			while (($file = readdir($dir_handler)) !== false) {
+
+				// ignore anything that starts with a dot
 				if(substr($file, 0, 1) != '.') {
 					$file_extenstion = PerchUtil::file_extension($file);
+
 					if($file_extenstion == $ext) {
 						$files[] = $prefix_path . $file;
 					} else {
 						//PerchUtil::mark('sub files');
 						//PerchUtil::debug($file);
 						if(is_dir("$dir_path/$file")) {
+							// add $prefix_path otherwise $sub_files won't have the correct relative paths
 							$sub_files = $this->_get_files("$dir_path/$file", $ext,   $prefix_path . $file . '/');
 							$files = array_merge($files, $sub_files);
 						} 
@@ -178,6 +182,11 @@ class PipitPinion_Helper {
 
 	/**
 	 * Exclude files
+	 * 
+	 * @param array $files		Array of files
+	 * @param array $excludes	Array of files to remove from $files
+	 * 
+	 * @return array
 	 */
 	public function exclude_files($files, $excludes) {
 		$files = array_values($files);
