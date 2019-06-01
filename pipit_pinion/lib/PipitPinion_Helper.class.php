@@ -88,7 +88,7 @@ class PipitPinion_Helper {
 			// check last charact. Not a slash? Add one.
 			if(substr($dir['url'], -1) !== '/') $dir['url'] .= '/';
 
-		} elseif(PERCH_PRODUCTION_MODE == "PERCH_DEVELOPMENT") {
+		} elseif(PERCH_PRODUCTION_MODE == PERCH_DEVELOPMENT) {
 
 			$dir['path'] = PerchUtil::file_path(PIPIT_PINION_ASSETS_DEV_PATH . '/' . $dir_name);
 			$dir['url'] = '/' . PIPIT_PINION_ASSETS_DEV_DIR . '/' . $dir_name . '/';
