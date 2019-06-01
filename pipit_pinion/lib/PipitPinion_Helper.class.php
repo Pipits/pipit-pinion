@@ -279,7 +279,12 @@ class PipitPinion_Helper {
 
 
 	/**
+	 * Matches the attributes to the files
 	 * 
+	 * @param array $attrs		Array. Key = file relative path. Value = array of attributes.
+	 * @param array $files		Array of files to match attributes to.
+	 * 
+	 * @return array
 	 */
 	function match_attrs_filename($attrs, $files) {
 		$result = array();
