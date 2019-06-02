@@ -155,6 +155,28 @@ class PipitPinion_Helper {
 		
 		return $files;
 	}
+
+
+	private function _get_files_alt($dir_path, $ext, $prefix_path = '') {
+		$result = array();
+		$files = scandir($dir_path);
+		unset($files[array_search('.', $files, true)]);
+		unset($files[array_search('..', $files, true)]);
+		
+		
+		foreach($files as $file) {
+			$file_extenstion = PerchUtil::file_extension($file);
+
+			if($file_extenstion == $ext) {
+				$result[] = $prefix_path . $file;
+			} elseif(is_dir($dir_path . DIRECTORY_SEPARATOR . $file)) {
+				$sub_files = $this->_get_files($dir_path . DIRECTORY_SEPARATOR . $file, $ext, $prefix_path . $file . '/');
+				$result = array_merge($result, $sub_files);
+			}
+		}
+		
+		return $result;
+	}
 	
 
 	
