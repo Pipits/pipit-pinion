@@ -63,29 +63,17 @@ class PerchFeather_PipitPinion extends PerchFeather {
 		$attrs_files = $result['attrs_files'];
 		
 		
-		
+		// create script tags
 		foreach($files as $key => $file) {
-			if(strrpos($file, '/')) {
-				$component = substr($file, strrpos($file, '/') + 1);						
-			} else {
-				$component = $file;
-			}
-			
-			
-			if (!$this->component_registered($component)) {
-				$attrs = [];
+			$attrs = array();
 
-				if(isset($attrs_files[$key])) {
-					$attrs = $attrs_files[$key];
-				}
-
-				$attrs['src'] = $prefix.$file;
-				
-				$out[] = $this->_script_tag($attrs);
-				$this->register_component($component);
+			if(isset($attrs_files[$key])) {
+				$attrs = $attrs_files[$key];
 			}
+
+			$attrs['src'] = $prefix.$file;
+			$out[] = $this->_script_tag($attrs);
 		}
-
 
 		
 		
